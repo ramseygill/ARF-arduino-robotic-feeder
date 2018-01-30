@@ -39,12 +39,12 @@ fauxmoESP fauxmo;                         // Initialize fauxmo
 WiFiUDP ntpUDP;                           // Initalize WifiUDP library
 
 // By default 'time.nist.gov' is used with 60 seconds update interval and no offset
-// Seattle is UTC-7 or -25200 seconds.
+// Seattle is UTC-8 or -28800 seconds.
 // Update interval is one minute or 60000 miliseconds.
 // You can specify the time server pool and the offset (in seconds, can be
 // changed later with setTimeOffset() ). Additionaly you can specify the
 // update interval (in milliseconds, can be changed using setUpdateInterval() ).
-NTPClient timeClient(ntpUDP, "0.us.pool.ntp.org", -25200, 60000);
+NTPClient timeClient(ntpUDP, "0.us.pool.ntp.org", -28800, 60000);
 
 //------------------------------------------------------------------------------------------------
 //SETUP
