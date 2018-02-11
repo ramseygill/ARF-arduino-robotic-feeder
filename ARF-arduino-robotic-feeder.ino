@@ -9,6 +9,8 @@
    ===============================================================================================
    NOTES, Credit, Sources, and Props
    NTP Library:https://github.com/arduino-libraries/NTPClient
+   OLED https://github.com/adafruit/Adafruit_SSD1306
+   EASY DRIVER https://learn.sparkfun.com/tutorials/easy-driver-hook-up-guide
 */
 //------------------------------------------------------------------------------------------------
 //LIBRARIES
@@ -27,6 +29,14 @@
 // PIN DEFINITION CONSTANTS
 const int I2C_SDA = 0;      //I2C bus data pin (SCL). ESP-12E "D3" GPIO0
 const int I2C_SCL = 14;     //I2C bus clock pin (SCL). ESP-12E "D5" GPIO14
+const int stp = 13;         //EASY DRIVER STEP PIN
+const int dir = 12;         //EASY DRIVER DIRECTION PIN
+
+//Declare variables for functions (EASY DRIVER)
+char user_input;
+int x;
+int y;
+int state;
 
 // GLOBAL CONSTANTS
 const char *ssid     = "skynet-2GHz";   // WIFI network you want to connect to.
@@ -58,7 +68,8 @@ void setup() {
   display.flipScreenVertically(); //SSD12306
 
   //CONFIGURE PIN USAGE
-
+  pinMode(stp, OUTPUT); //EASY DRIVER
+  pinMode(dir, OUTPUT); //EASY DRIVER
 
   //SET PIN INITIAL STATE
 
@@ -70,16 +81,16 @@ void setup() {
 
   fauxmo.onMessage(callback); //function call for fauxmo state check.
 
-  //------------USB Serial Comms Setup -----------------------------------------------
+//------------------------------------------------------------------------------------------------
   Serial.begin(baudRate);                            //start UART serial comm at global deff baudrate
   Serial.println();                                  // add two blank lines
   Serial.println();
   Serial.println("ARF - Arduino Robotic Feeder"); //vanity title for serial window
-  //----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
 
-  //------------WiFi Setup------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
   wifiSetup();     // Function call to kick off WiFi setup.
-  //----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
 }
 
 //------------------------------------------------------------------------------------------------
@@ -125,7 +136,6 @@ void callback(uint8_t device_id, const char * device_name, bool state) {
 
 // WIFI setup function
 //------------------------------------------------------------------------------------------------
-
 void wifiSetup() {
   // Set WIFI module to STA mode
   WiFi.mode(WIFI_STA);
@@ -147,6 +157,41 @@ void wifiSetup() {
   Serial.printf("[WIFI] STATION Mode, SSID: %s, IP address: %s\n", WiFi.SSID().c_str(), WiFi.localIP().toString().c_str());
 }
 
+// Stepper Driver FORWARD (food augur)
+//------------------------------------------------------------------------------------------------
+//Default microstep mode function
+void FeedForward(){
+  Serial.println("Moving forward at default step mode.");
+  digitalWrite(dir, HIGH); //Pull direction pin low to move "forward"
+  for(x= 1; x<1000; x++)  //Loop the forward stepping enough times for motion to be visible
+  {
+    digitalWrite(stp,HIGH); //Trigger one step forward
+    delay(1);
+    digitalWrite(stp,LOW); //Pull step pin low so it can be triggered again
+    delay(1);
+  }
+  Serial.println("Feed Done");
+  Serial.println();
+}
+
+// Stepper Driver BACKWARD (food augur)
+//------------------------------------------------------------------------------------------------
+//Default microstep mode function
+void FeedBackward(){
+  Serial.println("Moving backwards at default step mode.");
+  digitalWrite(dir, LOW); //Pull direction pin low to move "forward"
+  for(x= 1; x<1000; x++)  //Loop the forward stepping enough times for motion to be visible
+  {
+    digitalWrite(stp,HIGH); //Trigger one step forward
+    delay(1);
+    digitalWrite(stp,LOW); //Pull step pin low so it can be triggered again
+    delay(1);
+  }
+  Serial.println("Feed Back Done");
+  Serial.println();
+}
+//------------------------------------------------------------------------------------------------
+
 //================================================================================================
 //MAIN LOOP
 //================================================================================================
@@ -156,7 +201,9 @@ void loop() {
   updateTime();
   fauxmo.handle();     // call fauxmo device function
   display.display();   // write display buffer
-  delay(10);           // loop governor, determine how fast this loop runs
+  FeedForward();       // move augur forwardto dispense food. Uncomment to test augur 
+  
+  delay(250);           // loop governor, determine how fast this loop runs
 }
 //================================================================================================
 
