@@ -14,6 +14,6 @@ ARF is an attempt to feed may aging Basset Hound without having to get up at the
 * Shall not "look like a total piece of shit." (Spousal scope creep, DFW, Design for Wife, CX, UX)
 * Shall be constructed out of common lumber with minimal cuts. (Modeled using  1x12's
 
-# LINKS
+# Links:
 * Project Homepage https://hackaday.io/project/43858-arf-arduino-robotic-feeder
 * 3D Model https://myhub.autodesk360.com/ue2951b89/g/shares/SH7f1edQT22b515c761e2a62071876aa64ac
